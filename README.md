@@ -32,3 +32,14 @@ api.getUser('Alfred').then(viewModel.user, viewModel.error);
   <span class="error">{{ viewModel.error().message }}</span>
 {/if}
 ```
+
+### Coverage
+```
+----------|----------|----------|----------|----------|----------------|
+File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+----------|----------|----------|----------|----------|----------------|
+All files |      100 |      100 |      100 |      100 |                |
+ spec.js  |      100 |      100 |      100 |      100 |                |
+ ua.js    |      100 |      100 |      100 |      100 |                |
+----------|----------|----------|----------|----------|----------------|
+```
