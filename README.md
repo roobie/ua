@@ -1,6 +1,14 @@
-# ua - Uniform Accessor for javascript
+# ua - a uniform accessor for javascript
 
 This is a uniform accessor, `ua`, also known as a getter/setter or a function property.
+
+### Installing
+
+#### Manual
+Just copy the contents of `ua.js` into your project
+
+#### NPM
+`npm install --save https://github.com/roobie/ua`
 
 ### Usage 
 
@@ -28,7 +36,7 @@ api.getUser('Alfred').then(viewModel.user, viewModel.error);
 {#if viewModel.user()}
   <span class="user-name">{{ viewModel.user().name }}</span>
 {/if}
-{#if viewModel.user()}
+{#if viewModel.error()}
   <span class="error">{{ viewModel.error().message }}</span>
 {/if}
 ```
