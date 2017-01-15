@@ -1,4 +1,4 @@
-# ua - a uniform accessor for javascript
+# `uniform-accessor` - a uniform accessor for javascript
 
 This is a uniform accessor, `ua`, also known as a getter/setter or a function property.
 

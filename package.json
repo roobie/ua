@@ -1,5 +1,5 @@
 {
-  "name": "ua",
+  "name": "uniform-accessor",
   "version": "1.0.0",
   "description": "A simple uniform accessor for javascript",
   "main": "ua.js",
