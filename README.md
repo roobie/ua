@@ -4,15 +4,15 @@ This is a uniform accessor, `ua`, also known as a getter/setter or a function pr
 
 ### Installing
 
-#### Manual
+**Manual**
 Just copy the contents of `ua.js` into your project
 
-#### NPM
+**NPM**
 `npm install --save https://github.com/roobie/ua`
 
 ### Usage 
 
-#### Basics
+**Basics**
 
 ```javascript
 var prop = ua('hello');
@@ -21,7 +21,7 @@ prop('world') === 'world';
 prop(null) === null;
 ```
 
-#### "Real world" example
+**"Real world" example**
 
 ```javascript
 var viewModel = {
