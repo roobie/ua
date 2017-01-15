@@ -1,15 +1,34 @@
-# ua
-Uniform Accessor for javascript
+# ua - Uniform Accessor for javascript
 
---
+This is a uniform accessor, `ua`, also known as a getter/setter or a function property.
 
+### Usage 
 
-This is a Uniform Accessor, ua, also known as a getter/setter or a function property. Use it like thus:
+#### Basics
 
-```
+```javascript
 var prop = ua('hello');
 prop() === 'hello';
 prop('world') === 'world';
-prop.nullify() === null;
-prop() === null;
+prop(null) === null;
+```
+
+#### "Real world" example
+
+```javascript
+var viewModel = {
+  user: ua({}), // an empty object, so that we do incur a null ref
+  error: ua() // defaults to null
+};
+
+api.getUser('Alfred').then(viewModel.user, viewModel.error);
+```
+
+```html
+{#if viewModel.user()}
+  <span class="user-name">{{ viewModel.user().name }}</span>
+{/if}
+{#if viewModel.user()}
+  <span class="error">{{ viewModel.error().message }}</span>
+{/if}
 ```

@@ -4,7 +4,8 @@
   "description": "A simple uniform accessor for javascript",
   "main": "ua.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "precommit": "npm test",
+    "test": "tap spec.js --cov"
   },
   "repository": {
     "type": "git",
@@ -13,10 +14,14 @@
   "keywords": [
     "uniform-access"
   ],
-  "author": "BR",
+  "author": "Björn Roberg",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/roobie/ua/issues"
   },
-  "homepage": "https://github.com/roobie/ua#readme"
+  "homepage": "https://github.com/roobie/ua#readme",
+  "devDependencies": {
+    "husky": "^0.12.0",
+    "tap": "^9.0.3"
+  }
 }
