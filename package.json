@@ -1,10 +1,12 @@
 {
   "name": "uniform-accessor",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A simple uniform accessor for javascript",
   "main": "ua.js",
   "scripts": {
+    "build-es5": "babel ua.js -o ua.es5.js",
     "precommit": "npm test",
+    "pretest": "npm run build-es5",
     "test": "tap spec.js --cov"
   },
   "repository": {
@@ -21,6 +23,8 @@
   },
   "homepage": "https://github.com/roobie/ua#readme",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-env": "^1.1.8",
     "husky": "^0.12.0",
     "tap": "^9.0.3"
   }

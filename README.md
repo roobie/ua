@@ -1,11 +1,12 @@
-# `uniform-accessor` - a uniform accessor for javascript
+# `uniform-accessor`
 
 This is a uniform accessor, `ua`, also known as a getter/setter or a function property.
 
-### Installing
+### Caveats
 
-**Manual**
-Just copy the contents of `ua.js` into your project
+This module is written in ES 6 syntax, but an ES 5 transpiled module is in the source tree names `ua.es5.js`
+
+### Installing
 
 **NPM**
 `npm install --save https://github.com/roobie/ua`
@@ -43,6 +44,20 @@ api.getUser('Alfred').then(viewModel.user, viewModel.error);
 {#if viewModel.error()}
   <span class="error">{{ viewModel.error().message }}</span>
 {/if}
+```
+
+### Configuration
+
+It's possible to trigger events when the accessor is used:
+
+```javascript
+const error = ua(null, {
+  onset: () => data(null),
+  onget: (current) => console.log('Someone accessed me. Current error is', error)
+});
+const data = ua(null, {
+  onset: () => error(null)
+});
 ```
 
 ### Serialization
