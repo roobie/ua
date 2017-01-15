@@ -62,7 +62,7 @@ const data = ua(null, {
 
 ### Serialization
 
-The `function` returned by `ua` defined a `toJSON` property, which results in it being automagically serialized as the boxed value.
+The `function` returned by `ua` defines a `toJSON` property, which results in it being automagically serialized as the boxed value.
 
 ```javascript
 var user = ua({ name: "Alfred" });
