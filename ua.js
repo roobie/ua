@@ -23,7 +23,7 @@ function ua(value) {
   // this is the variable to which the current value is bound
   var store = value;
 
-  function getset(maybeNewValue) {
+  function uniformAccess(maybeNewValue) {
     // if exactly one argument is received, the `value` variable is
     // re-bound to the value of the parameter `maybeNewValue`.
     if (arguments.length === 1) {
@@ -34,8 +34,12 @@ function ua(value) {
     return store;
   }
 
+  uniformAccess.toJSON = function () {
+    return value;
+  };
+
   // return the accessor function
-  return getset;
+  return uniformAccess;
 }
 
 module.exports = ua;

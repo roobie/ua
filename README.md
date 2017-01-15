@@ -45,6 +45,15 @@ api.getUser('Alfred').then(viewModel.user, viewModel.error);
 {/if}
 ```
 
+### Serialization
+
+The `function` returned by `ua` defined a `toJSON` property, which results in it being automagically serialized as the boxed value.
+
+```javascript
+var user = ua({ name: "Alfred" });
+JSON.stringify(user); // => "{\"name\":\"Alfred\"}"
+```
+
 ### Coverage
 ```
 ----------|----------|----------|----------|----------|----------------|
