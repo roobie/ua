@@ -15,6 +15,8 @@ Just copy the contents of `ua.js` into your project
 **Basics**
 
 ```javascript
+var ua = require('uniform-accessor');
+
 var prop = ua('hello');
 prop() === 'hello';
 prop('world') === 'world';
@@ -24,6 +26,8 @@ prop(null) === null;
 **"Real world" example**
 
 ```javascript
+var ua = require('uniform-accessor');
+
 var viewModel = {
   user: ua({}), // an empty object, so that we do incur a null ref
   error: ua() // defaults to null
