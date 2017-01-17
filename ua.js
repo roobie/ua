@@ -39,6 +39,33 @@ export default function ua(value = null, { onset, onget } = {}) {
     return store;
   }
 
+  uniformAccess.equals = function (other) {
+    return typeof other === 'function' &&
+      other() === this();
+  };
+
+  uniformAccess.map = function (fn) {
+    return ua(fn(this()));
+  };
+
+  uniformAccess.update = function (fn) {
+    this(fn(this()));
+    return this;
+  };
+
+  uniformAccess.collect = function (x) {
+    this(x());
+    return this;
+  };
+
+  uniformAccess.valueOf = function () {
+    if (onget) {
+      onget(store);
+    }
+
+    return store;
+  };
+
   uniformAccess.toJSON = function () {
     return value;
   };

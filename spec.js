@@ -46,7 +46,7 @@ test('serialization', t => {
 });
 
 test('callbacks', t => {
-  t.plan(7);
+  t.plan(9);
 
   const ref1 = {};
   const ref2 = {};
@@ -75,4 +75,36 @@ test('callbacks', t => {
   t.equals(countGet, 1);
   v1(ref2);
   t.equals(countSet, 1);
+
+  v1.valueOf();
+  t.equals(countGet, 3);
+});
+
+
+const inc1 = x => x + 1;
+const inc2 = x => x + 2;
+
+test('map', t => {
+  t.plan(3);
+
+  const a = ua(1);
+
+  t.ok(a.map(x => x).equals(a));
+  t.ok(a.map(x => inc1(inc2(x))).equals(a.map(inc1).map(inc2)));
+  t.equals(a.map(inc1).map(inc2).valueOf(), 4);
+});
+
+test('temp', t => {
+  t.plan(4);
+
+  const a = ua(1);
+  t.equals(a, a.update(inc1));
+
+  const b = ua(1);
+  t.equals(2, b.update(inc1).valueOf());
+
+  const c = ua(9);
+  t.equals(9, a.collect(c).valueOf());
+
+  t.equals(c, c.collect(b));
 });

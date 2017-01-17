@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -50,6 +50,32 @@ function ua() {
     // always return the current value bound to the variable `value`
     return store;
   }
+
+  uniformAccess.equals = function (other) {
+    return typeof other === 'function' && other() === this();
+  };
+
+  uniformAccess.map = function (fn) {
+    return ua(fn(this()));
+  };
+
+  uniformAccess.update = function (fn) {
+    this(fn(this()));
+    return this;
+  };
+
+  uniformAccess.collect = function (x) {
+    this(x());
+    return this;
+  };
+
+  uniformAccess.valueOf = function () {
+    if (onget) {
+      onget(store);
+    }
+
+    return store;
+  };
 
   uniformAccess.toJSON = function () {
     return value;
