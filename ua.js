@@ -31,6 +31,8 @@ export default function ua (value = null) {
     // re-bound to the value of the parameter `maybeNewValue`.
     if (arguments.length === 1) {
       store = maybeNewValue
+    } else if (arguments.length !== 0) {
+      throw new TypeError('There must be exactly either zero or one argument')
     }
 
     // always return the current value bound to the variable `value`
