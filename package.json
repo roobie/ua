@@ -2,7 +2,8 @@
   "name": "uniform-accessor",
   "version": "2.0.0",
   "description": "A simple uniform accessor for javascript",
-  "main": "ua.js",
+  "main": "ua.es5.js",
+  "module": "ua.js",
   "scripts": {
     "build-es5": "babel ua.js -o ua.es5.js",
     "precommit": "npm test",
