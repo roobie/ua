@@ -4,7 +4,7 @@ This is a uniform accessor, `ua`, also known as a getter/setter or a function pr
 
 ### Caveats
 
-This module is written in ES 6 syntax, but an ES 5 transpiled module is in the source tree names `ua.es5.js`
+This module is written in ES 6 syntax, but an ES 5 transpiled module is in the source tree named `ua.es5.js`
 
 ### Installing
 
