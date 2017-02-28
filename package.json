@@ -6,8 +6,11 @@
   "scripts": {
     "build-es5": "babel ua.js -o ua.es5.js",
     "precommit": "npm test",
-    "pretest": "npm run build-es5",
-    "test": "tap spec.js --cov --coverage-report=html"
+    "code:lint": "standard --fix ua.js spec.js",
+    "pretest": "npm run build-es5 && npm run code:lint",
+    "test": "tap spec.js",
+    "test:cov": "tap spec.js --cov --coverage-report=html",
+    "test:cont": "nodemon -x \"npm test\""
   },
   "repository": {
     "type": "git",
@@ -27,5 +30,12 @@
     "babel-preset-env": "^1.1.8",
     "husky": "^0.12.0",
     "tap": "^9.0.3"
+  },
+  "dependencies": {
+    "eslint": "^3.16.1",
+    "eslint-plugin-promise": "^3.4.2",
+    "eslint-plugin-standard": "^2.0.1",
+    "nodemon": "^1.11.0",
+    "standard": "^8.6.0"
   }
 }

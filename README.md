@@ -9,9 +9,15 @@ This module is written in ES 6 syntax, but an ES 5 transpiled module is in the s
 ### Installing
 
 **NPM**
-`npm install --save https://github.com/roobie/ua`
+`npm install --save <github-archive>`
 
-### Usage 
+**yarn**
+`yarn add <github-archive>`
+
+where `<github-archive>` is:
+`https://github.com/roobie/uniform-accessor/archive/v2.0.0-rc2.tar.gz`
+
+### Usage
 
 **Basics**
 
@@ -24,40 +30,45 @@ prop('world') === 'world';
 prop(null) === null;
 ```
 
-**"Real world" example**
+**"Real world™" example**
 
 ```javascript
-var ua = require('uniform-accessor');
+var ua = require('uniform-accessor')
 
 var viewModel = {
-  user: ua({}), // an empty object, so that we do incur a null ref
-  error: ua() // defaults to null
-};
+  items: ua([]),
+  error: ua(), // defaults to null
 
-api.getUser('Alfred').then(viewModel.user, viewModel.error);
+  addItem: (newItem) => {
+    viewModel.items.update(ary => ary.concat(newItem))
+    // this is equivalent to:
+    const current = viewModel.items()
+    viewModel.items(current.concat(newItem))
+  }
+}
+
+const init = () => {
+  api.getItems()
+    .then(
+      // we say here that when the promise resolves sucessfully, update
+      // the uniform-accessor `viewModel.items`, but also do set the
+      // `viewModel.error` uniform-accessor to `null`
+      viewModel.items.chain(() => viewModel.error(null)),
+      // otherwise, if the promise is rejected, set the `viewModel.error`
+      // to contain the reason
+      viewModel.error)
+}
+
+init()
 ```
 
 ```html
-{#if viewModel.user()}
-  <span class="user-name">{{ viewModel.user().name }}</span>
+{#if viewModel.items().length}
+  <span class="item-count">{{ viewModel.items().length }}</span>
 {/if}
 {#if viewModel.error()}
   <span class="error">{{ viewModel.error().message }}</span>
 {/if}
-```
-
-### Configuration
-
-It's possible to trigger events when the accessor is used:
-
-```javascript
-const error = ua(null, {
-  onset: () => data(null),
-  onget: (current) => console.log('Someone accessed me. Current error is', error)
-});
-const data = ua(null, {
-  onset: () => error(null)
-});
 ```
 
 ### Serialization
@@ -70,12 +81,5 @@ JSON.stringify(user); // => "{\"name\":\"Alfred\"}"
 ```
 
 ### Coverage
-```
-----------|----------|----------|----------|----------|----------------|
-File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
-----------|----------|----------|----------|----------|----------------|
-All files |      100 |      100 |      100 |      100 |                |
- spec.js  |      100 |      100 |      100 |      100 |                |
- ua.js    |      100 |      100 |      100 |      100 |                |
-----------|----------|----------|----------|----------|----------------|
-```
+
+Should™ be `100%`
