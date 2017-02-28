@@ -10,7 +10,7 @@
     "code:lint": "standard --fix ua.js spec.js",
     "pretest": "npm run build-es5 && npm run code:lint",
     "test": "tap spec.js",
-    "test:cov": "tap spec.js --cov --coverage-report=html",
+    "test:cov": "npm test && tap spec.js --cov --coverage-report=html",
     "test:cont": "nodemon -x \"npm test\""
   },
   "repository": {

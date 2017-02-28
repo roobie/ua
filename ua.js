@@ -131,7 +131,7 @@ export default function ua (value = null) {
    * @returns the current value
    */
   uniformAccess.toJSON = function () {
-    return value
+    return store
   }
 
   // return the accessor function

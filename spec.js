@@ -34,8 +34,6 @@ test('ua update value', t => {
 })
 
 test('serialization', t => {
-  t.plan(3)
-
   const uaRef = ua(valueByRef)
   const uaValue = ua(valueByValue)
   const uaEmpty = ua()
@@ -43,6 +41,11 @@ test('serialization', t => {
   t.equals(JSON.stringify(uaRef), JSON.stringify(valueByRef))
   t.equals(JSON.stringify(uaValue), JSON.stringify(valueByValue))
   t.equals(JSON.stringify(uaEmpty), JSON.stringify(null))
+
+  uaEmpty(valueByRef)
+  t.equals(JSON.stringify(uaEmpty), JSON.stringify(valueByRef))
+
+  t.end()
 })
 
 test('args len', t => {
