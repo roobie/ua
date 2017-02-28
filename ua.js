@@ -106,11 +106,11 @@ export default function ua (value = null) {
   /**
    * Updates this instance with the value of another uniform access instance/function.
    *
-   * @param x - the other uniform access instance/function
+   * @param fn - the other uniform access instance/function
    *
    */
-  uniformAccess.collect = function (x) {
-    uniformAccess(x())
+  uniformAccess.collect = function (fn) {
+    uniformAccess(fn())
     return uniformAccess
   }
 

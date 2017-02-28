@@ -45,6 +45,13 @@ test('serialization', t => {
   t.equals(JSON.stringify(uaEmpty), JSON.stringify(null))
 })
 
+test('args len', t => {
+  const a = ua(1)
+  t.throws(() => a(1, 2))
+
+  t.end()
+})
+
 const inc1 = x => x + 1
 const inc2 = x => x + 2
 
