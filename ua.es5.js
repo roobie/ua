@@ -3,178 +3,111 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = ua;
+exports.default = state;
+
+var _fantasyLand = require('fantasy-land');
+
+var _fantasyLand2 = _interopRequireDefault(_fantasyLand);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
- * This is an implementation of a uniform accessor, ua or couls also be called
- * a getter/setter or a function property.
  *
- * @param value - the initial value of this instance. Defaults to null
- * @returns a function that is used to access (or modify) the internally stored `value`
- * @example
- * ```
- * var prop = ua('hello');
- * prop() === 'hello';
- * prop('world') === 'world';
- * prop() === 'world';
- * ```
  */
-function ua() {
+function state() {
   var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
   // this is the variable to which the current value is bound
   var store = value;
 
-  /**
-   * This is the actual accessor function that is returned from invoking
-   * the exported function. Its single purpose is to expose get/set functionality
-   * to the outer world.
-   *
-   * @param maybeNewValue - if any arguments are received, this value will be used
-   * to update the internal store.
-   * @returns if no arguments are received, then the current value of the internal
-   * store is returned, otherwise, the value of the first argument is returned
-   */
-  function uniformAccess(maybeNewValue) {
-    // if exactly one argument is received, the `store` binding is
-    // re-bound to the value of the parameter `maybeNewValue`.
+  function monad(maybeNewValue) {
     if (arguments.length === 1) {
       store = maybeNewValue;
     } else if (arguments.length !== 0) {
       throw new TypeError('There must be exactly either zero or one argument');
     }
 
-    // always return the current value bound to the variable `value`
     return store;
   }
 
-  // return the accessor function
-  return augment(uniformAccess);
+  return augment(monad);
 }
 
-/**
- * Augments a stateMonad with methods
- *
- */
-function augment(stateMonad) {
-  /**
-   * Unwraps this instance and the other one, and performs an `===`
-   * (i.e. strict) equality check of the contained values.
-   *
-   * @param fn - the other uniform accessor (or a plain function)
-   * @returns true if the values are equal, false if not.
-   */
-  stateMonad.equals = function (fn) {
-    return typeof fn === 'function' && fn() === stateMonad();
+function augment(monad) {
+  monad.equals = function (m) {
+    return monad.valueOf() === m.valueOf();
   };
 
-  /**
-   * Applies the function in this instance to the value of the uniform accessor/function
-   * received as first argument. This results in a new instance.
-   *
-   * @param fn - the uniform accessor/function which holds the value to be used in the
-   * application
-   * @returns a new uniform accessor that stores the result of the computation
-   */
-  stateMonad.ap = function () {
-    return ua(stateMonad().apply(this, arguments));
+  monad.of = function (x) {
+    return state(x);
   };
 
-  /**
-   * Map a function on the value of the value of this instance, resulting in a new uniform
-   * accessor instance. Works similar to the Array.prototype.map function.
-   *
-   * @param fn - the function to use in the application
-   * @returns a new uniform accessor that stores the result of the computation
-   */
-  stateMonad.map = function (fn) {
-    return ua(fn(stateMonad()));
+  monad.map = function (f) {
+    return monad.of(f(monad.valueOf()));
+  };
+  monad[_fantasyLand2.default.map] = monad.map;
+
+  monad.chain = function (f) {
+    return f(monad.valueOf());
   };
 
-  /**
-   * Creates a function that will call the received function when the first function itself
-   * is called. This is useful when you want certain side-effects to happen when this
-   * instance is updated.
-   *
-   * @param fn - the function to call when the returned function is called. This function
-   * will receive the value received as well
-   * @returns a function that will: a. update this uniform access instance, and b. call
-   * the chained function.
-   */
-  stateMonad.chain = function (fn) {
+  monad.ap = function (m) {
+    return m.chain(function (f) {
+      return monad.map(f);
+    });
+  };
+
+  monad.transform = function (f) {
+    return monad(f(monad.valueOf()));
+  };
+
+  monad.collect = function (f) {
+    return monad(f());
+  };
+
+  monad.around = function (before, after) {
     return augment(function () {
-      var result = stateMonad.apply(this, arguments);
-      fn.apply(this, [].concat(Array.prototype.slice.call(arguments), [result]));
+      if (before) {
+        before.apply(this, arguments);
+      }
+
+      var result = monad.apply(this, arguments);
+
+      if (after) {
+        after.apply(this, arguments);
+      }
+
       return result;
     });
   };
 
-  stateMonad.pre = function (fn) {
-    return augment(function () {
-      fn.apply(this, arguments);
-      return stateMonad.apply(this, arguments);
-    });
+  monad.trigger = function (f) {
+    return monad.around(null, f);
   };
 
-  stateMonad.readonly = function () {
-    return augment(function () {
-      return stateMonad();
-    });
-  };
+  monad.throwOnMutate = function () {
+    return monad.around(check, null);
 
-  stateMonad.throwOnMutate = function () {
-    return stateMonad.pre(function () {
+    function check() {
       if (arguments.length > 0) {
-        throw new TypeError('Tried to mutate frozen stateMonad');
+        throw new TypeError('Update of state not allowed');
       }
+    }
+  };
+
+  monad.readonly = function () {
+    return augment(function () {
+      return monad();
     });
   };
 
-  /**
-   * Updates the value stored in this instance by storing the result of applying the
-   * function received as the first argument.
-   *
-   * @param fn - the function to use to transform the value of the uniform accessor
-   * @returns this instance
-   */
-  stateMonad.update = function (fn) {
-    stateMonad(fn(stateMonad()));
-    return stateMonad;
+  monad.valueOf = function () {
+    return monad();
   };
 
-  /**
-   * Updates this instance with the value of another uniform access instance/function.
-   *
-   * @param fn - the other uniform access instance/function
-   *
-   */
-  stateMonad.collect = function (fn) {
-    stateMonad(fn());
-    return stateMonad;
+  monad.toJSON = function () {
+    return monad.valueOf();
   };
 
-  stateMonad.nullify = function () {
-    return stateMonad(null);
-  };
-
-  /**
-   * In practice, exactly the same as reading the value of the uniform access instance, i.e.
-   * `uainstance() === uainstance.valueOf()`, but semantically different.
-   *
-   * @returns the current value of this instance.
-   */
-  stateMonad.valueOf = function () {
-    return stateMonad();
-  };
-
-  /**
-   * In order to seamlessly integrate with `JSON`, we expose this method, which simply
-   * returns the current value, so that it is serialized properly.
-   *
-   * @returns the current value
-   */
-  stateMonad.toJSON = function () {
-    return stateMonad();
-  };
-
-  return stateMonad;
+  return monad;
 }
