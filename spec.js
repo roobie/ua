@@ -75,9 +75,10 @@ test('ap', t => {
   const inc1ua = ua(inc1)
   const inc2ua = ua(inc2)
 
-  t.ok(ua(x => x).ap(a).equals(a))
-  t.ok(ua(x => inc1(inc2(x))).ap(a).equals(inc2ua.ap(inc1ua.ap(a))))
-  t.equals(inc2ua.ap(inc1ua.ap(a)).valueOf(), 4)
+  t.ok(ua(x => x).ap(a()).equals(a))
+  t.ok(ua(x => inc1(inc2(x))).ap(a()).equals(
+    inc2ua.ap(inc1ua.ap(a()))))
+  t.equals(inc2ua.ap(inc1ua.ap(a())).valueOf(), 4)
 })
 
 test('chain', t => {
@@ -89,6 +90,37 @@ test('chain', t => {
   acb(2)
   t.equals(a(), 2)
   t.equals(b(), 1)
+
+  t.end()
+})
+
+test('readonly', t => {
+  const a = ua(1).readonly()
+
+  t.equals(a(), 1)
+  a(2)
+  t.equals(a(), 1)
+
+  let param = -1
+  let result = -1
+  const chained = a.chain((fromArg, fromResult) => {
+    param = fromArg
+    result = fromResult
+  })
+  // since `a` is `readonly`, it should not be updated to 2
+  t.equals(chained(2), 1)
+  t.equals(param, 2)
+  t.equals(result, 1)
+
+  t.end()
+})
+
+test('throwOnMutate', t => {
+  const a = ua(1).throwOnMutate()
+
+  t.equals(a(), 1)
+  t.throws(() => a(2), /tried to mutate frozen stateMonad/i)
+  t.throws(() => a.update(x => x + 1), /tried to mutate frozen stateMonad/i)
 
   t.end()
 })
@@ -106,4 +138,53 @@ test('mutator helpers', t => {
   t.equals(9, a.collect(c).valueOf())
 
   t.equals(c, c.collect(b))
+})
+
+const resolve = (data) => new Promise((resolve) => resolve(data))
+const reject = (err) => new Promise((resolve, reject) => reject(err))
+
+test('example code 1', t => {
+  t.plan(2)
+
+  const dataResult = [42, 8, 64]
+
+  const error = ua(null)
+  const data = ua([]).chain(error.nullify)
+
+  return resolve(dataResult)
+          .then(data, error)
+          .then(() => {
+            t.equals(data(), dataResult)
+            t.equals(error(), null)
+          })
+})
+
+test('example code 2', t => {
+  t.plan(1)
+
+  const error = ua(null)
+  const data = ua([]).chain(error.nullify)
+
+  const err = new Error('test')
+  return reject(err)
+          .then(data, error)
+          .then(() => {
+            t.equals(error(), err)
+          })
+})
+
+test('example code 3', t => {
+  t.plan(2)
+
+  const dataResult = [42, 8, 64]
+
+  const error = ua(new Error())
+  const data = ua([]).chain(error.nullify)
+
+  return resolve(dataResult)
+    .then(data, error)
+    .then(() => {
+      t.equals(data(), dataResult)
+      t.equals(error(), null)
+    })
 })

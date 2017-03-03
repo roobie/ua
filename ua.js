@@ -39,6 +39,15 @@ export default function ua (value = null) {
     return store
   }
 
+  // return the accessor function
+  return augment(uniformAccess)
+}
+
+/**
+ * Augments a stateMonad with methods
+ *
+ */
+function augment (stateMonad) {
   /**
    * Unwraps this instance and the other one, and performs an `===`
    * (i.e. strict) equality check of the contained values.
@@ -46,9 +55,9 @@ export default function ua (value = null) {
    * @param fn - the other uniform accessor (or a plain function)
    * @returns true if the values are equal, false if not.
    */
-  uniformAccess.equals = function (fn) {
+  stateMonad.equals = function (fn) {
     return typeof fn === 'function' &&
-      fn() === uniformAccess()
+      fn() === stateMonad()
   }
 
   /**
@@ -59,8 +68,8 @@ export default function ua (value = null) {
    * application
    * @returns a new uniform accessor that stores the result of the computation
    */
-  uniformAccess.ap = function (fn) {
-    return ua(uniformAccess()(fn()))
+  stateMonad.ap = function () {
+    return ua(stateMonad().apply(this, arguments))
   }
 
   /**
@@ -70,8 +79,8 @@ export default function ua (value = null) {
    * @param fn - the function to use in the application
    * @returns a new uniform accessor that stores the result of the computation
    */
-  uniformAccess.map = function (fn) {
-    return ua(fn(uniformAccess()))
+  stateMonad.map = function (fn) {
+    return ua(fn(stateMonad()))
   }
 
   /**
@@ -84,11 +93,33 @@ export default function ua (value = null) {
    * @returns a function that will: a. update this uniform access instance, and b. call
    * the chained function.
    */
-  uniformAccess.chain = function (fn) {
-    return (x) => {
-      uniformAccess(x)
-      fn(x)
-    }
+  stateMonad.chain = function (fn) {
+    return augment(function () {
+      const result = stateMonad.apply(this, arguments)
+      fn.apply(this, [...arguments, result])
+      return result
+    })
+  }
+
+  stateMonad.pre = function (fn) {
+    return augment(function () {
+      fn.apply(this, arguments)
+      return stateMonad.apply(this, arguments)
+    })
+  }
+
+  stateMonad.readonly = function () {
+    return augment(function () {
+      return stateMonad()
+    })
+  }
+
+  stateMonad.throwOnMutate = function () {
+    return stateMonad.pre(function () {
+      if (arguments.length > 0) {
+        throw new TypeError('Tried to mutate frozen stateMonad')
+      }
+    })
   }
 
   /**
@@ -98,9 +129,9 @@ export default function ua (value = null) {
    * @param fn - the function to use to transform the value of the uniform accessor
    * @returns this instance
    */
-  uniformAccess.update = function (fn) {
-    uniformAccess(fn(uniformAccess()))
-    return uniformAccess
+  stateMonad.update = function (fn) {
+    stateMonad(fn(stateMonad()))
+    return stateMonad
   }
 
   /**
@@ -109,9 +140,13 @@ export default function ua (value = null) {
    * @param fn - the other uniform access instance/function
    *
    */
-  uniformAccess.collect = function (fn) {
-    uniformAccess(fn())
-    return uniformAccess
+  stateMonad.collect = function (fn) {
+    stateMonad(fn())
+    return stateMonad
+  }
+
+  stateMonad.nullify = function () {
+    return stateMonad(null)
   }
 
   /**
@@ -120,8 +155,8 @@ export default function ua (value = null) {
    *
    * @returns the current value of this instance.
    */
-  uniformAccess.valueOf = function () {
-    return store
+  stateMonad.valueOf = function () {
+    return stateMonad()
   }
 
   /**
@@ -130,10 +165,9 @@ export default function ua (value = null) {
    *
    * @returns the current value
    */
-  uniformAccess.toJSON = function () {
-    return store
+  stateMonad.toJSON = function () {
+    return stateMonad()
   }
 
-  // return the accessor function
-  return uniformAccess
+  return stateMonad
 }
