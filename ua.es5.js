@@ -15,7 +15,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Type initializer for a `State` monad
  * @kind function
  * @param {any} value - the initial value
- * @returns {function} an instance of the `State` monad with its initial value set to `value`
+ * @returns {monad} an instance of the `State` monad with its initial value set to `value`
  */
 function State() {
   var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -30,6 +30,7 @@ function State() {
    * It allows for reading and updating the internally stored value
    * by checking whether or not an argument was received in its
    * invocation.
+   * @function monad
    * @mixes augment
    * @example
    * const x = State(1)
@@ -53,6 +54,7 @@ function State() {
  * plus other functionality
  * @function augment
  * @inner
+ * @namespace monad
  * @access private
  * @mixin
  */
@@ -66,6 +68,8 @@ function augment(monad) {
   /**
    * Compares two instances of `State` by using `===` on their internal values
    * @method equals
+   * @instance
+   * @memberof monad
    * @access public
    * @param {State} m - the other instance of `State` to compare to
    */
