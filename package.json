@@ -5,10 +5,10 @@
   "main": "ua.es5.js",
   "module": "ua.js",
   "scripts": {
-    "build-es5": "babel ua.js -o ua.es5.js",
+    "build-es5": "rm ua.es5.js && babel ua.js -o ua.es5.js",
     "precommit": "npm test",
     "code:lint": "standard --fix ua.js spec.js",
-    "pretest": "npm run build-es5 && npm run code:lint",
+    "pretest": "npm run build-es5 && npm run code:lint && jsdoc2md ua.es5.js > DOC.md",
     "test": "tap spec.js",
     "test:cov": "npm test && tap spec.js --cov --coverage-report=html",
     "test:cont": "nodemon -x \"npm test\""
@@ -37,6 +37,7 @@
     "eslint-plugin-promise": "^3.4.2",
     "eslint-plugin-standard": "^2.0.1",
     "fantasy-land": "^3.0.0",
+    "jsdoc-to-markdown": "^3.0.0",
     "nodemon": "^1.11.0",
     "standard": "^8.6.0"
   }
