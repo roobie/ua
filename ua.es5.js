@@ -30,6 +30,7 @@ function State() {
    * It allows for reading and updating the internally stored value
    * by checking whether or not an argument was received in its
    * invocation.
+   * @inner
    * @function monad
    * @mixes augment
    * @example
@@ -72,12 +73,23 @@ function augment(monad) {
    * @memberof monad
    * @access public
    * @param {State} m - the other instance of `State` to compare to
+   * @returns {bool} `true` if strictly equal, `false` if not
    */
   monad.equals = function (m) {
     return monad.valueOf() === m.valueOf();
   };
   monad[_fantasyLand2.default.equals] = monad.equals;
 
+  /**
+   * Maps a function over the value of this instance of `State`
+   * @method map
+   * @instance
+   * @memberof monad
+   * @access public
+   * @param {function} f - the function to apply
+   * @returns {monad} a new instance of the `State` monad with its value set to the
+   * result of the mapping
+   */
   monad.map = function (f) {
     return State.of(f(monad.valueOf()));
   };
