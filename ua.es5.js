@@ -27,34 +27,53 @@ exports.default = ua;
 function ua() {
   var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      onset = _ref.onset,
-      onget = _ref.onget;
-
   // this is the variable to which the current value is bound
   var store = value;
+  var eventHandlers = {
+    onSet: [],
+    onGet: []
+  };
 
-  function uniformAccess(maybeNewValue) {
+  function instance(maybeNewValue) {
     // if exactly one argument is received, the `value` variable is
     // re-bound to the value of the parameter `maybeNewValue`.
     if (arguments.length === 1) {
+      trigger(eventHandlers.onSet, [arguments[0], value, instance]);
       store = maybeNewValue;
-      if (onset) {
-        onset(maybeNewValue);
-      }
+    } else if (arguments.length === 0) {
+      trigger(eventHandlers.onGet, [value, instance]);
     }
 
-    if (onget) {
-      onget(store);
-    }
     // always return the current value bound to the variable `value`
     return store;
   }
 
-  uniformAccess.toJSON = function () {
+  instance.toJSON = function () {
     return value;
   };
 
+  instance.onSet = function (callback) {
+    return registerEventHandler(eventHandlers.onSet, callback);
+  };
+
+  instance.onGet = function (callback) {
+    return registerEventHandler(eventHandlers.onGet, callback);
+  };
+
   // return the accessor function
-  return uniformAccess;
+  return instance;
+
+  function registerEventHandler(list, callback) {
+    list.push(callback);
+    return function deregister() {
+      list.splice(list.indexOf(callback), 1);
+    };
+  }
+
+  function trigger(handlers, args) {
+    for (var i = 0; i < handlers.length; ++i) {
+      var handler = handlers[i];
+      handler.apply(null, args);
+    }
+  }
 }
