@@ -2,13 +2,16 @@
   "name": "uniform-accessor",
   "version": "2.0.0",
   "description": "A simple uniform accessor for javascript",
-  "main": "ua.js",
+  "main": "ua.es5.js",
+  "module": "ua.js",
   "scripts": {
     "build-es5": "babel ua.js -o ua.es5.js",
     "precommit": "npm test",
-    "lint": "standard --fix ua.js spec.js",
-    "pretest": "npm run lint && npm run build-es5",
-    "test": "tap spec.js --cov --coverage-report=html"
+    "code:lint": "standard --fix ua.js spec.js",
+    "pretest": "npm run build-es5 && npm run code:lint",
+    "test": "tap spec.js",
+    "test:cov": "npm test && tap spec.js --cov --coverage-report=html",
+    "test:cont": "nodemon -x \"npm test\""
   },
   "repository": {
     "type": "git",
@@ -30,6 +33,10 @@
     "tap": "^9.0.3"
   },
   "dependencies": {
-    "standard": "^10.0.3"
+    "eslint": "^3.16.1",
+    "eslint-plugin-promise": "^3.4.2",
+    "eslint-plugin-standard": "^2.0.1",
+    "nodemon": "^1.11.0",
+    "standard": "^8.6.0"
   }
 }
